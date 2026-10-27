@@ -1,0 +1,16 @@
+# Keep the build context to source only — and never send personal data or
+# local config into an image.
+data
+logs
+.env*
+!.env.example
+node_modules
+.output
+.nitro
+.tanstack
+.git
+.github
+.claude
+.agents
+.vscode
+*.log

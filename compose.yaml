@@ -1,0 +1,18 @@
+# docker compose up -d --build   →   http://localhost:8009
+# Data is kept in the named volume `notes-data` (survives rebuilds).
+services:
+  notes:
+    build:
+      context: .
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:-Notes}
+    # To use the published image instead of building locally:
+    # image: ghcr.io/liteblusky/notes:latest
+    ports:
+      - '8009:8009'
+    volumes:
+      - notes-data:/data
+    restart: unless-stopped
+
+volumes:
+  notes-data:

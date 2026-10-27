@@ -1,0 +1,28 @@
+{
+  "projectName": "notes",
+  "mode": "file-router",
+  "typescript": true,
+  "tailwind": true,
+  "packageManager": "pnpm",
+  "git": true,
+  "install": true,
+  "intent": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "mysql"
+    }
+  },
+  "projectPreset": "default",
+  "includeExamples": false,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "tanstack-query",
+    "drizzle",
+    "table",
+    "form",
+    "eslint",
+    "nitro"
+  ]
+}
