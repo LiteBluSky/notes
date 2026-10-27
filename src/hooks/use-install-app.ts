@@ -7,6 +7,16 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
+// Chrome fires this once per page load, usually before React has hydrated,
+// so catch it as soon as this module loads and hand it to the hook later.
+let deferredPrompt: InstallPromptEvent | null = null
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    deferredPrompt = e as InstallPromptEvent
+  })
+}
+
 export type InstallState =
   /** Already running as an installed app. */
   | 'installed'
@@ -35,12 +45,18 @@ export function useInstallApp() {
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
     if (ios) setState('ios')
 
+    // Already caught before hydration.
+    if (deferredPrompt) {
+      setEvent(deferredPrompt)
+      setState('prompt')
+    }
     const onPrompt = (e: Event) => {
       e.preventDefault()
       setEvent(e as InstallPromptEvent)
       setState('prompt')
     }
     const onInstalled = () => {
+      deferredPrompt = null
       setEvent(null)
       setState('installed')
     }
@@ -57,6 +73,8 @@ export function useInstallApp() {
     if (!event) return false
     await event.prompt()
     const { outcome } = await event.userChoice
+    // A prompt can only be shown once; Chrome fires a new event if allowed.
+    deferredPrompt = null
     setEvent(null)
     if (outcome === 'accepted') setState('installed')
     return outcome === 'accepted'
