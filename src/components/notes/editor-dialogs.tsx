@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { CopyIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { CopyIcon, FileDownIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 import { useRef } from 'react'
 
 import {
@@ -45,6 +45,7 @@ import type { EditorState, OpenEditor } from './editor'
 import { FolderForm } from './folder-form'
 import { Markdown } from './markdown'
 import { NoteForm } from './note-form'
+import { usePrintNote } from './note-print'
 
 // `state` is kept around after closing (only `open` flips) so the dialog
 // content doesn't blank out during its exit animation.
@@ -161,7 +162,8 @@ const edited = new Intl.DateTimeFormat(undefined, {
 })
 
 // The note's preview: title large, a gap, then the rendered markdown. Task
-// boxes can be ticked right here. `e` edits, `d` deletes.
+// boxes can be ticked right here. `e` edits, `d` deletes, Ctrl+P exports it
+// as a PDF.
 function NoteView({
   note,
   path,
@@ -175,6 +177,7 @@ function NoteView({
 }) {
   const queryClient = useQueryClient()
   const { queryKey } = treeQueryOptions
+  const [printNote, printElement] = usePrintNote()
   const toggleTask = useMutation({
     mutationFn: (next: Note) =>
       updateNote({
@@ -232,6 +235,11 @@ function NoteView({
     <div
       className="flex flex-col gap-6"
       onKeyDown={(e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+          e.preventDefault()
+          printNote(note, path)
+          return
+        }
         if (e.ctrlKey || e.metaKey || e.altKey) return
         if ((e.target as Element).closest('input, textarea')) return
         if (e.key === 'e' || e.key === 'r') {
@@ -280,6 +288,10 @@ function NoteView({
           <CopyIcon data-icon="inline-start" />
           Copy text
         </Button>
+        <Button variant="outline" onClick={() => printNote(note, path)}>
+          <FileDownIcon data-icon="inline-start" />
+          Export PDF
+        </Button>
         {/* Focused on open so e / d / Esc work straight away. */}
         <Button autoFocus onClick={() => onEdit(note)}>
           <PencilIcon data-icon="inline-start" />
@@ -287,6 +299,7 @@ function NoteView({
           <Kbd className="max-sm:hidden">E</Kbd>
         </Button>
       </DialogFooter>
+      {printElement}
     </div>
   )
 }

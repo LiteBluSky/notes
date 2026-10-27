@@ -137,7 +137,10 @@ applies it before first paint).
   a gap, then the rendered markdown (`markdown.tsx`, `.markdown` styles in
   `styles.css`). Task boxes are clickable: `toggleTaskAt` flips `[ ]`/`[x]`
   at the list item's source offset and saves optimistically. Reads the note
-  live from the tree query by id. `e` edits, `d` deletes.
+  live from the tree query by id. `e` edits, `d` deletes. Export PDF /
+  Ctrl+P prints just the note via the browser's "Save as PDF"
+  (`note-print.tsx`: a print-only portal, always light, page titled after
+  the note so it's the default file name).
 - `mode: 'edit'` — `note-form.tsx`, the bookmarks link form scaled up
   (`sm:max-w-3xl`): Title (optional) + Folder, a formatting toolbar and a
   monospace textarea. Enter continues lists/checklists (Enter on an empty

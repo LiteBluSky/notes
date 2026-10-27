@@ -35,6 +35,7 @@ it. Add new tasks under the right phase instead of doing unplanned work.
 - [x] Recent (1–4) + Most viewed (5–8) above the search, replacing
       favourites
 - [x] Shortcuts help lists tree, preview and writing keys
+- [x] Export the previewed note as a PDF (print dialog, Ctrl+P)
 
 ## 4. Installable app
 

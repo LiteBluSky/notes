@@ -62,7 +62,9 @@ body {
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
+:root,
+/* PDF export is always light, whatever the theme. */
+[data-note-print] {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -214,4 +216,34 @@ body {
 .markdown li.task-list-item:has(> [data-task-checkbox][data-checked]) {
   color: var(--muted-foreground);
   text-decoration: line-through;
+}
+
+/* PDF export (components/notes/note-print.tsx): while a note is being
+   printed, it's the only thing on the page. The dialog's scroll lock is
+   undone so the note can run over several pages. */
+@media screen {
+  [data-note-print] {
+    display: none;
+  }
+}
+@media print {
+  @page {
+    margin: 2cm;
+  }
+  html:has(body > [data-note-print]),
+  body:has(> [data-note-print]) {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: white;
+  }
+  body:has(> [data-note-print]) > :not([data-note-print]) {
+    display: none !important;
+  }
+  [data-note-print] {
+    color: var(--foreground);
+  }
+  [data-note-print] [data-task-checkbox] {
+    opacity: 1;
+  }
 }
